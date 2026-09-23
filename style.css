@@ -1,0 +1,34 @@
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#070707;--panel:#101010;--panel2:#151515;--text:#f5f5f5;--muted:#989898;--red:#ff2020;--red2:#a90000;--line:#252525}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:-30%;background:radial-gradient(circle at 50% 18%,rgba(255,0,0,.18),transparent 28%),radial-gradient(circle at 80% 70%,rgba(160,0,0,.08),transparent 25%);pointer-events:none}
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:38px 38px;mask-image:linear-gradient(to bottom,#000,transparent 90%);pointer-events:none}
+.navbar{position:relative;z-index:2;max-width:1050px;margin:auto;padding:22px 20px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:24px;font-weight:900;letter-spacing:-1px;color:#fff;text-decoration:none}.brand span{color:var(--red)}
+.install-btn{border:1px solid #303030;background:#151515;color:#fff;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer}
+main{position:relative;z-index:1;max-width:1050px;margin:auto;padding:45px 20px 80px}
+.hero{text-align:center;max-width:760px;margin:20px auto 0}
+.badge{display:inline-flex;gap:8px;align-items:center;border:1px solid #342020;background:#120909;border-radius:999px;padding:8px 13px;color:#cfcfcf;font-size:12px;font-weight:800;letter-spacing:.6px}
+.badge i{width:7px;height:7px;background:var(--red);border-radius:50%;box-shadow:0 0 12px var(--red)}
+h1{font-size:clamp(45px,9vw,82px);line-height:.98;margin:25px 0 18px;font-weight:950;letter-spacing:-4px}
+h1 span{color:var(--red);text-shadow:0 0 30px rgba(255,0,0,.22)}
+.hero>p{color:var(--muted);font-size:16px;line-height:1.7;max-width:600px;margin:auto}
+.actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:30px 0}
+.primary-btn,.secondary-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;text-decoration:none;border-radius:15px;padding:15px 22px;font-weight:850;transition:.2s}
+.primary-btn{background:linear-gradient(135deg,#ff2929,#b50000);color:#fff;box-shadow:0 12px 35px rgba(255,0,0,.16)}
+.secondary-btn{background:#111;border:1px solid #292929;color:#eee}
+.primary-btn:hover,.secondary-btn:hover{transform:translateY(-2px)}
+.theme-switch{display:inline-flex;border:1px solid #242424;background:#0d0d0d;border-radius:12px;padding:4px}
+.theme-switch button{border:0;background:transparent;color:#777;padding:8px 11px;border-radius:8px;font-size:11px;font-weight:900;cursor:pointer}
+.theme-switch button.active{background:#202020;color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:70px 0}
+.stats div,.card,.official{background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));border:1px solid var(--line);border-radius:20px}
+.stats div{text-align:center;padding:20px}.stats strong{display:block;font-size:25px}.stats span{display:block;color:#777;font-size:10px;font-weight:900;letter-spacing:1.5px;margin-top:4px}
+.section{margin-top:30px}.section-title{text-align:center;margin-bottom:25px}.section-title h2,.official h2{font-size:30px}.section-title p,.official p{color:var(--muted);margin-top:7px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{padding:22px;min-height:190px}.icon{font-size:25px;color:var(--red);margin-bottom:22px}.card h3{font-size:18px}.card p{color:#8d8d8d;font-size:13px;line-height:1.6;margin:8px 0 20px}.status{font-size:11px;font-weight:800;color:#aaa}
+.official{margin-top:45px;padding:25px;display:flex;align-items:center;justify-content:space-between;gap:20px}.mini-badge{font-size:10px;color:var(--red);font-weight:900;letter-spacing:1.5px}
+footer{text-align:center;color:#555;font-size:11px;padding:25px}
+body.light{--bg:#f4f4f4;--panel:#fff;--panel2:#eee;--text:#111;--muted:#666;--line:#ddd}
+body.light:before{opacity:.25}.light .navbar,.light .install-btn{color:#111}.light .install-btn,.light .secondary-btn,.light .theme-switch{background:#fff;border-color:#ddd}.light .secondary-btn{color:#111}.light .stats div,.light .card,.light .official{background:#fff}
+body.glitch{--red:#00ff66;--red2:#00a844}.glitch h1 span,.glitch .icon,.glitch .mini-badge{color:var(--red)}.glitch .badge i{background:var(--red);box-shadow:0 0 12px var(--red)}
+@media(max-width:700px){main{padding-top:25px}.navbar{padding:17px 15px}.install-btn span{display:none}h1{letter-spacing:-2.5px}.stats,.cards{grid-template-columns:1fr}.stats{margin:50px 0 35px}.stats div{padding:16px}.official{flex-direction:column;align-items:flex-start}.official .secondary-btn{width:100%}}
