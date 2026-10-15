@@ -1,0 +1,230 @@
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local player = Players.LocalPlayer
+
+local playerGui = player:WaitForChild("PlayerGui")
+local existing = playerGui:FindFirstChild("FLUXMOD_EGG")
+if existing then
+    existing:Destroy()
+end
+
+local gui = Instance.new("ScreenGui")
+gui.Name = "FLUXMOD_EGG"
+gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
+gui.Parent = playerGui
+
+local main = Instance.new("Frame")
+main.Name = "Main"
+main.Size = UDim2.new(0, 300, 0, 390)
+main.Position = UDim2.new(0.5, -150, 0.5, -195)
+main.BackgroundColor3 = Color3.fromRGB(19, 20, 30)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+main.Parent = gui
+
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 12)
+mainCorner.Parent = main
+
+local outline = Instance.new("UIStroke")
+outline.Color = Color3.fromRGB(145, 95, 255)
+outline.Thickness = 2
+outline.Parent = main
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -84, 0, 42)
+title.Position = UDim2.fromOffset(12, 0)
+title.BackgroundTransparency = 1
+title.Text = "FLUXMOD EGG"
+title.TextColor3 = Color3.fromRGB(194, 166, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = main
+
+local function makeButton(parent, text, size, position, color)
+    local button = Instance.new("TextButton")
+    button.Size = size
+    button.Position = position
+    button.BackgroundColor3 = color
+    button.BorderSizePixel = 0
+    button.Text = text
+    button.TextColor3 = Color3.fromRGB(245, 245, 255)
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 12
+    button.AutoButtonColor = true
+    button.Parent = parent
+
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, 7)
+    corner.Parent = button
+    return button
+end
+
+local minimize = makeButton(
+    main, "—", UDim2.fromOffset(30, 30),
+    UDim2.new(1, -72, 0, 6), Color3.fromRGB(65, 55, 95)
+)
+
+local close = makeButton(
+    main, "X", UDim2.fromOffset(30, 30),
+    UDim2.new(1, -37, 0, 6), Color3.fromRGB(160, 48, 65)
+)
+
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1, -20, 0, 32)
+status.Position = UDim2.fromOffset(10, 42)
+status.BackgroundTransparency = 1
+status.Text = "Tekan REFRESH untuk memindai objek bernama egg"
+status.TextColor3 = Color3.fromRGB(215, 215, 230)
+status.Font = Enum.Font.Gotham
+status.TextSize = 11
+status.TextWrapped = true
+status.Parent = main
+
+local refresh = makeButton(
+    main, "REFRESH EGG LIST",
+    UDim2.new(1, -20, 0, 36),
+    UDim2.fromOffset(10, 77),
+    Color3.fromRGB(93, 66, 165)
+)
+
+local list = Instance.new("ScrollingFrame")
+list.Name = "EggList"
+list.Size = UDim2.new(1, -20, 0, 225)
+list.Position = UDim2.fromOffset(10, 121)
+list.BackgroundColor3 = Color3.fromRGB(29, 30, 43)
+list.BorderSizePixel = 0
+list.ScrollBarThickness = 5
+list.AutomaticCanvasSize = Enum.AutomaticSize.Y
+list.CanvasSize = UDim2.new(0, 0, 0, 0)
+list.Parent = main
+
+local listCorner = Instance.new("UICorner")
+listCorner.CornerRadius = UDim.new(0, 8)
+listCorner.Parent = list
+
+local padding = Instance.new("UIPadding")
+padding.PaddingTop = UDim.new(0, 7)
+padding.PaddingBottom = UDim.new(0, 7)
+padding.PaddingLeft = UDim.new(0, 6)
+padding.PaddingRight = UDim.new(0, 6)
+padding.Parent = list
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 5)
+layout.SortOrder = Enum.SortOrder.Name
+layout.Parent = list
+
+local footer = Instance.new("TextLabel")
+footer.Size = UDim2.new(1, -20, 0, 25)
+footer.Position = UDim2.new(0, 10, 1, -28)
+footer.BackgroundTransparency = 1
+footer.Text = "FLUXMOD TEAM • SCANNER"
+footer.TextColor3 = Color3.fromRGB(155, 132, 225)
+footer.Font = Enum.Font.GothamBold
+footer.TextSize = 10
+footer.Parent = main
+
+local minimized = false
+local fullSize = main.Size
+
+minimize.Activated:Connect(function()
+    minimized = not minimized
+    list.Visible = not minimized
+    refresh.Visible = not minimized
+    status.Visible = not minimized
+    footer.Visible = not minimized
+    main.Size = minimized and UDim2.new(0, 220, 0, 42) or fullSize
+    minimize.Text = minimized and "+" or "—"
+end)
+
+close.Activated:Connect(function()
+    gui:Destroy()
+end)
+
+local function getObjectPosition(object)
+    if object:IsA("BasePart") then
+        return object.Position
+    elseif object:IsA("Model") then
+        local success, pivot = pcall(function()
+            return object:GetPivot()
+        end)
+        if success then
+            return pivot.Position
+        end
+    end
+    return nil
+end
+
+local function scanEggs()
+    for _, child in ipairs(list:GetChildren()) do
+        if child:IsA("TextButton") or child:IsA("TextLabel") then
+            child:Destroy()
+        end
+    end
+
+    local found = {}
+    for _, object in ipairs(Workspace:GetDescendants()) do
+        if (object:IsA("BasePart") or object:IsA("Model"))
+            and string.find(object.Name:lower(), "egg", 1, true) then
+            table.insert(found, object)
+        end
+    end
+
+    table.sort(found, function(a, b)
+        return a:GetFullName() < b:GetFullName()
+    end)
+
+    if #found == 0 then
+        status.Text = "Tidak menemukan objek bernama 'egg' di Workspace."
+        local empty = Instance.new("TextLabel")
+        empty.Size = UDim2.new(1, -8, 0, 42)
+        empty.BackgroundTransparency = 1
+        empty.Text = "Tidak ada objek yang cocok."
+        empty.TextColor3 = Color3.fromRGB(190, 190, 205)
+        empty.Font = Enum.Font.Gotham
+        empty.TextSize = 12
+        empty.Parent = list
+        return
+    end
+
+    local maxItems = math.min(#found, 150)
+    status.Text = "Ditemukan " .. #found .. " objek • menampilkan " .. maxItems
+
+    for index = 1, maxItems do
+        local object = found[index]
+        local pos = getObjectPosition(object)
+        local positionText = pos
+            and string.format("X %.0f  Y %.0f  Z %.0f", pos.X, pos.Y, pos.Z)
+            or "Posisi tidak tersedia"
+
+        local button = makeButton(
+            list,
+            object.Name .. "  •  " .. positionText,
+            UDim2.new(1, -4, 0, 38),
+            UDim2.new(0, 0, 0, 0),
+            Color3.fromRGB(48, 42, 69)
+        )
+        button.TextTruncate = Enum.TextTruncate.AtEnd
+        button.TextXAlignment = Enum.TextXAlignment.Left
+
+        button.Activated:Connect(function()
+            local currentPosition = getObjectPosition(object)
+            if not object:IsDescendantOf(Workspace) then
+                status.Text = "Objek sudah tidak ada di Workspace."
+            elseif currentPosition then
+                status.Text = object.Name .. " • " ..
+                    string.format("X %.1f, Y %.1f, Z %.1f",
+                    currentPosition.X, currentPosition.Y, currentPosition.Z)
+            else
+                status.Text = "Posisi objek tidak tersedia."
+            end
+        end)
+    end
+end
+
+refresh.Activated:Connect(scanEggs)
+scanEggs()
